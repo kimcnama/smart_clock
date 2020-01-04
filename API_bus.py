@@ -3,8 +3,8 @@ import json
 import time
 
 class API_bus:
-    def __init__(self, num):
-        self.stop_num = num
+    def __init__(self, stop_num):
+        self.stop_num = stop_num
         self.url = "https://data.smartdublin.ie/cgi-bin/rtpi/realtimebusinformation?stopid={}&format=json".format(self.stop_num)
         self.time_stamp_last_call = time.time()
         self.bus_info = []
@@ -22,6 +22,8 @@ class API_bus:
                     self.bus_info.append("{} in {} mins".format(bus['route'], bus['duetime']))
                 for bus in self.bus_info:
                     print(bus + '\n')
+        else:
+            print("Error calling Bus API stop: {}".format(self.stop_num))
 
 if __name__ == '__main__':
     bus = API_bus("184")
