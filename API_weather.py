@@ -61,7 +61,7 @@ class API_weather:
                 i = self.check_if_time_captured(weather_pt)
                 self.hourly_forecast[i].rain = data['location']['precipitation']['@value']
                 self.hourly_forecast[i].day_time_symbol = data['location']['symbol']['@id']
-                self.hourly_forecast[i].t_from = weather_pt.time_from
+                self.hourly_forecast[i].time_from = weather_pt.time_from
 
     def generate_url(self):
         now = datetime.datetime.now()
