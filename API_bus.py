@@ -19,7 +19,7 @@ class API_bus:
                 self.time_stamp_last_call = time.time()
                 results = json_response['results']
                 for bus in results:
-                    self.bus_info.append("{} in {} mins".format(bus['route'], bus['duetime']))
+                    self.bus_info.append("{}-{}mins".format(bus['route'], bus['duetime']))
                 for bus in self.bus_info:
                     print(bus + '\n')
         else:
@@ -28,3 +28,5 @@ class API_bus:
 if __name__ == '__main__':
     bus = API_bus("184")
     bus.make_api_call()
+    for i in bus.bus_info:
+        print(i)

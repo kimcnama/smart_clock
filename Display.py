@@ -3,6 +3,7 @@ from PIL import Image, ImageTk, ImageFont, ImageDraw
 import os
 import datetime
 import random
+from API_bus import API_bus
 
 image_dir = 'images'
 font_path = '/usr/share/fonts/truetype/freefont/FreeSans.ttf'
@@ -15,6 +16,7 @@ window_height = 780
 class Display(object):
     def __init__(self):
         self.root = Tk()
+        self.bus = API_bus("184")
         self.refresh_time = 1000
         self.root.title('Smart Clock')
         self.canvas = Canvas(width=window_width, height=window_height, bg='white')
@@ -38,9 +40,19 @@ class Display(object):
         loaded_image = loaded_image.resize((window_width, window_height),resample=Image.BICUBIC)
         draw = ImageDraw.Draw(loaded_image)
 
+        # clock
         font = ImageFont.truetype(font_path, 100)
-
         draw.text((loaded_image.size[0] / 3, loaded_image.size[1] / 3), self.get_time(), colour_map['black'], font=font)
+
+        # bus
+        font = ImageFont.truetype(font_path, 68)
+        bus_str = ""
+        self.bus.make_api_call()
+        for i in range(len(self.bus.bus_info)):
+            bus_str = "{}\n{}".format(bus_str, self.bus.bus_info[i])
+            if i > 4:
+                break
+        draw.text((0, 0), bus_str, colour_map['black'], font=font)
 
         # convert loaded_image with Pillow's [ImageTK]
         return ImageTk.PhotoImage(loaded_image)
