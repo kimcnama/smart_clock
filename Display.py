@@ -23,6 +23,8 @@ class Display(object):
         self.root.title('Smart Clock')
         self.canvas = Canvas(width=window_width, height=window_height, bg='white')
         self.canvas.pack()
+        self.weather_hours_displayed = 12
+        self.weather_icon_dim = int(window_width / self.weather_hours_displayed)
 
         self.photo = self.generate_image()
         self.img = self.canvas.create_image(0, 0, image=self.photo, anchor=NW)
@@ -33,6 +35,7 @@ class Display(object):
     def change_photo(self):
         self.photo = self.generate_image()
         self.canvas.itemconfig(self.img, image=self.photo, anchor=NW)
+        # Open Lexis surface plot, trim whitespace, paste into canvas
         self.root.after(self.refresh_time, self.change_photo)
 
     def generate_image(self):
@@ -40,6 +43,10 @@ class Display(object):
         images = os.listdir(image_dir)
         loaded_image = Image.open(os.path.join(image_dir, images[random.randrange(0, len(images))]))
         loaded_image = loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
+        sun = Image.open("images/icon_sun.png")
+        sun = sun.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
+        for i in range(self.weather_hours_displayed):
+            loaded_image.paste(sun, box=(self.weather_icon_dim * i, window_height - self.weather_icon_dim))
         draw = ImageDraw.Draw(loaded_image)
 
         # clock
