@@ -97,6 +97,7 @@ class API_weather:
                                tomorrow_hour)
 
     def get_icon_path(self, day_time_symbol, wind):
+        wind = int(wind)
         wind_threshold = 4
         day_time_symbol = day_time_symbol.lower()
         if 'rain' in day_time_symbol and 'sun' in day_time_symbol:
