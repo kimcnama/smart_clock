@@ -7,7 +7,11 @@ from API_bus import API_bus
 from API_weather import API_weather
 
 image_dir = 'images'
-font_path = '/usr/share/fonts/truetype/freefont/FreeSans.ttf'
+clock_font_sz = 210
+weather_font_sz = 20
+bus_font_sz = 50
+font_path = '/usr/share/fonts/truetype/freefont/FreeSerif.ttf'
+font_bold_path = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
 colour_map = {'black':(0, 0, 0),
               'white':(255, 255, 255)}
 time_font = 100
@@ -23,6 +27,9 @@ class Display(object):
         self.weather.make_api_call()
         self.refresh_time = 1000
         self.root.title('Smart Clock')
+        self.clock_font = ImageFont.truetype(font_bold_path, clock_font_sz)
+        self.bus_font = ImageFont.truetype(font_path, bus_font_sz)
+        self.weather_font = ImageFont.truetype(font_path, weather_font_sz)
         self.canvas = Canvas(width=window_width, height=window_height, bg='white')
         self.canvas.pack()
         self.weather_hours_displayed = 12
@@ -58,11 +65,10 @@ class Display(object):
         draw = ImageDraw.Draw(loaded_image)
 
         # clock
-        font = ImageFont.truetype(font_path, 100)
-        draw.text((loaded_image.size[0] / 3, loaded_image.size[1] / 3), self.get_time(), colour_map['black'], font=font)
+        draw.text((loaded_image.size[0] / 3, loaded_image.size[1] / 3), self.get_time(), colour_map['black'],
+                  font=self.clock_font)
 
         # bus
-        font = ImageFont.truetype(font_path, 68)
         bus_str = ""
         now = datetime.datetime.now()
         if now.second % self.bus.frequency_of_call == 0 and now.hour > 5:
@@ -76,17 +82,17 @@ class Display(object):
                 bus_str = "{}\n{}".format(bus_str, self.bus.bus_info[i])
             if i > 4:
                 break
-        draw.text((0, 0), bus_str, colour_map['black'], font=font)
+        draw.text((0, 0), bus_str, colour_map['black'], font=self.bus_font)
 
         # Weather
         if now.minute == 1 or not self.weather.hourly_forecast:
             self.weather.make_api_call()
 
-        font_weather = ImageFont.truetype(font_path, 20)
+
         for i, hour in enumerate(self.weather.hourly_forecast):
             weather_str = "{}h\n{}°".format(hour.hour, hour.temp)
             draw.text((int(self.weather_icon_dim/2)-12+self.weather_icon_dim*i, window_height - self.weather_icon_dim - 25)
-                      ,weather_str, colour_map['black'], font=font_weather)
+                      ,weather_str, colour_map['black'], font=self.weather_font)
 
         # convert loaded_image with Pillow's [ImageTK]
         return ImageTk.PhotoImage(loaded_image)
