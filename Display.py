@@ -18,7 +18,9 @@ class Display(object):
     def __init__(self):
         self.root = Tk()
         self.bus = API_bus("184")
+        self.bus.make_api_call()
         self.weather = API_weather()
+        self.weather.make_api_call()
         self.refresh_time = 1000
         self.root.title('Smart Clock')
         self.canvas = Canvas(width=window_width, height=window_height, bg='white')
@@ -43,10 +45,10 @@ class Display(object):
         images = os.listdir(image_dir)
         loaded_image = Image.open(os.path.join(image_dir, images[random.randrange(0, len(images))]))
         loaded_image = loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
-        sun = Image.open("images/icon_sun.png")
-        sun = sun.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
         for i in range(self.weather_hours_displayed):
-            loaded_image.paste(sun, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), sun)
+            icon = Image.open(self.weather.get_icon_path(self.weather.hourly_forecast[i].day_time_symbol))
+            icon = icon.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
+            loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
         draw = ImageDraw.Draw(loaded_image)
 
         # clock

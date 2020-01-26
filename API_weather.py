@@ -97,7 +97,12 @@ class API_weather:
                                tomorrow_hour)
 
     def get_icon_path(self, day_time_symbol):
-        return None
+        if 'rain' in day_time_symbol.lower():
+            return "images/icon_rain.png"
+        elif 'cloud' in day_time_symbol.lower():
+            return "images/icon_cloudy.png"
+        else:
+            return "images/icon_sun.png"
 
 if __name__ == '__main__':
     weather = API_weather()
