@@ -96,13 +96,54 @@ class API_weather:
         return self.url.format(self.lat, self.lng, year, month, day, hour, tomorrow_year, tomorrow_month, tomorrow_day,
                                tomorrow_hour)
 
-    def get_icon_path(self, day_time_symbol):
-        if 'rain' in day_time_symbol.lower():
-            return "images/icon_rain.png"
-        elif 'cloud' in day_time_symbol.lower():
-            return "images/icon_cloudy.png"
+    def get_icon_path(self, day_time_symbol, wind):
+        wind_threshold = 4
+        day_time_symbol = day_time_symbol.lower()
+        if 'rain' in day_time_symbol and 'sun' in day_time_symbol:
+            wind_threshold = 4
+            if 'dark' in day_time_symbol:
+                return 'images/icon_night_rain.jpeg'
+            else:
+                return "images/icon_rainsuncloud.png"
+        elif 'rain' in day_time_symbol and wind > wind_threshold:
+            if 'dark' in day_time_symbol:
+                return 'images/wind_rain.jpeg'
+            else:
+                return "images/wind_rain.png"
+        elif 'rain' in day_time_symbol:
+            if 'dark' in day_time_symbol:
+                return 'images/icon_night_rain.jpeg'
+            else:
+                return "images/icon_rain.png"
+        elif 'cloud' in day_time_symbol and 'sun' in day_time_symbol:
+            if 'dark' in day_time_symbol:
+                return "images/icon_night_cloud.png"
+            else:
+                return "images/icon_suncloud.png"
+        elif 'cloud' in day_time_symbol:
+            if 'dark' in day_time_symbol:
+                return "images/icon_night_cloud.png"
+            else:
+                return "images/icon_cloudy.png"
+        if 'rain' not in day_time_symbol and wind > wind_threshold:
+            if 'dark' in day_time_symbol:
+                return "images/icon_night_wind.png"
+            else:
+                return "images/icon_wind.png"
+        elif 'sun' in day_time_symbol and 'cloud' in day_time_symbol:
+            if 'dark' in day_time_symbol:
+                return "images/icon_night_cloud.png"
+            else:
+                return "images/icon_suncloud.png"
+        elif 'sun' in day_time_symbol:
+            if 'dark' in day_time_symbol:
+                return "images/icon_night_sun.png"
+            else:
+                return "images/icon_sun.png"
+        elif 'snow' in day_time_symbol:
+            return "images/icon_snow.png"
         else:
-            return "images/icon_sun.png"
+            return "images/icon_cloudy.png"
 
 if __name__ == '__main__':
     weather = API_weather()

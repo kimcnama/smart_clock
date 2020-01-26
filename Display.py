@@ -45,8 +45,11 @@ class Display(object):
         images = os.listdir(image_dir)
         loaded_image = Image.open(os.path.join(image_dir, images[random.randrange(0, len(images))]))
         loaded_image = loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
+
+        # Weather icons
         for i in range(self.weather_hours_displayed):
-            icon = Image.open(self.weather.get_icon_path(self.weather.hourly_forecast[i].day_time_symbol))
+            icon = Image.open(self.weather.get_icon_path(self.weather.hourly_forecast[i].day_time_symbol,
+                                                         self.weather.hourly_forecast[i].wind))
             icon = icon.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
             loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
         draw = ImageDraw.Draw(loaded_image)
@@ -72,18 +75,9 @@ class Display(object):
                 break
         draw.text((0, 0), bus_str, colour_map['black'], font=font)
 
+        # Weather
         if now.minute == 1 or not self.weather.hourly_forecast:
             self.weather.make_api_call()
-        # weather_str = ""
-        # for i, hour in enumerate(self.weather.hourly_forecast):
-        #     if not weather_str:
-        #         weather_str = "{} {} {}C".format(hour.hour, hour.day_time_symbol, hour.temp)
-        #     else:
-        #         weather_str = "{}\n{} {} {}C".format(weather_str, hour.hour, hour.day_time_symbol, hour.temp)
-        #     if i > 12:
-        #         break
-        #
-        # draw.text((600, 0), weather_str, colour_map['black'], font=font_weather)
 
         font_weather = ImageFont.truetype(font_path, 20)
         for i, hour in enumerate(self.weather.hourly_forecast):
