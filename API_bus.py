@@ -8,6 +8,9 @@ class API_bus:
         self.url = "https://data.smartdublin.ie/cgi-bin/rtpi/realtimebusinformation?stopid={}&format=json".format(self.stop_num)
         self.time_stamp_last_call = time.time()
         self.bus_info = []
+        # seconds
+        self.frequency_of_call = 20
+        self.empty_msg = "No RTPI Info"
 
     def make_api_call(self):
         response = requests.get(self.url)
@@ -19,11 +22,11 @@ class API_bus:
                 self.time_stamp_last_call = time.time()
                 results = json_response['results']
                 for bus in results:
-                    self.bus_info.append("{}-{}mins".format(bus['route'], bus['duetime']))
+                    self.bus_info.append("{} in {}mins".format(bus['route'], bus['duetime']))
                 for bus in self.bus_info:
                     print(bus + '\n')
                 if not self.bus_info:
-                    self.bus_info.append("No RTPI Info")
+                    self.bus_info.append(self.empty_msg)
         else:
             print("Error calling Bus API stop: {}".format(self.stop_num))
 

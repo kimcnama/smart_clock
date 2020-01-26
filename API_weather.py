@@ -99,3 +99,5 @@ class API_weather:
 if __name__ == '__main__':
     weather = API_weather()
     weather.make_api_call()
+    for hour in weather.hourly_forecast:
+        print(str(hour.hour) + " " + hour.day_time_symbol + " " + hour.temp + " C")
