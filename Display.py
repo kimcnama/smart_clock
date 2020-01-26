@@ -11,8 +11,8 @@ font_path = '/usr/share/fonts/truetype/freefont/FreeSans.ttf'
 colour_map = {'black':(0, 0, 0),
               'white':(255, 255, 255)}
 time_font = 100
-window_width = 1000
-window_height = 780
+window_width = 1050
+window_height = 540
 
 class Display(object):
     def __init__(self):
@@ -74,16 +74,22 @@ class Display(object):
 
         if now.minute == 1 or not self.weather.hourly_forecast:
             self.weather.make_api_call()
-        weather_str = ""
+        # weather_str = ""
+        # for i, hour in enumerate(self.weather.hourly_forecast):
+        #     if not weather_str:
+        #         weather_str = "{} {} {}C".format(hour.hour, hour.day_time_symbol, hour.temp)
+        #     else:
+        #         weather_str = "{}\n{} {} {}C".format(weather_str, hour.hour, hour.day_time_symbol, hour.temp)
+        #     if i > 12:
+        #         break
+        #
+        # draw.text((600, 0), weather_str, colour_map['black'], font=font_weather)
+
+        font_weather = ImageFont.truetype(font_path, 20)
         for i, hour in enumerate(self.weather.hourly_forecast):
-            if not weather_str:
-                weather_str = "{} {} {}C".format(hour.hour, hour.day_time_symbol, hour.temp)
-            else:
-                weather_str = "{}\n{} {} {}C".format(weather_str, hour.hour, hour.day_time_symbol, hour.temp)
-            if i > 12:
-                break
-        font_weather = ImageFont.truetype(font_path, 40)
-        draw.text((600, 0), weather_str, colour_map['black'], font=font_weather)
+            weather_str = "{}h\n{}°".format(hour.hour, hour.temp)
+            draw.text((int(self.weather_icon_dim/2)-12+self.weather_icon_dim*i, window_height - self.weather_icon_dim - 25)
+                      ,weather_str, colour_map['black'], font=font_weather)
 
         # convert loaded_image with Pillow's [ImageTK]
         return ImageTk.PhotoImage(loaded_image)
