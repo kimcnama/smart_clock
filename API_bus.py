@@ -22,6 +22,8 @@ class API_bus:
                     self.bus_info.append("{}-{}mins".format(bus['route'], bus['duetime']))
                 for bus in self.bus_info:
                     print(bus + '\n')
+                if not self.bus_info:
+                    self.bus_info.append("No RTPI Info")
         else:
             print("Error calling Bus API stop: {}".format(self.stop_num))
 
