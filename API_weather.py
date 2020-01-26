@@ -108,7 +108,7 @@ class API_weather:
         if 'rain' in day_time_symbol and 'sun' in day_time_symbol:
             wind_threshold = 4
             if 'dark' in day_time_symbol or night_time():
-                return 'images/icon_night_rain.jpeg'
+                return 'images/icon_night_rain.png'
             else:
                 return "images/icon_rainsuncloud.png"
         elif 'rain' in day_time_symbol and wind > wind_threshold:
@@ -118,7 +118,7 @@ class API_weather:
                 return "images/wind_rain.png"
         elif 'rain' in day_time_symbol:
             if 'dark' in day_time_symbol or night_time():
-                return 'images/icon_night_rain.jpeg'
+                return 'images/icon_night_rain.png'
             else:
                 return "images/icon_rain.png"
         elif 'cloud' in day_time_symbol and 'sun' in day_time_symbol:
