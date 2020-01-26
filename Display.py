@@ -51,7 +51,10 @@ class Display(object):
             icon = Image.open(self.weather.get_icon_path(self.weather.hourly_forecast[i].day_time_symbol,
                                                          self.weather.hourly_forecast[i].wind))
             icon = icon.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
-            loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
+            try:
+                loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
+            except:
+                loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim))
         draw = ImageDraw.Draw(loaded_image)
 
         # clock
