@@ -65,7 +65,7 @@ class Display(object):
         draw = ImageDraw.Draw(loaded_image)
 
         # clock
-        draw.text((loaded_image.size[0] / 3, loaded_image.size[1] / 3), self.get_time(), colour_map['black'],
+        draw.text(((loaded_image.size[0] / 3) + 50, loaded_image.size[1] / 3), self.get_time(), colour_map['black'],
                   font=self.clock_font)
 
         # bus
@@ -87,7 +87,6 @@ class Display(object):
         # Weather
         if now.minute == 1 or not self.weather.hourly_forecast:
             self.weather.make_api_call()
-
 
         for i, hour in enumerate(self.weather.hourly_forecast):
             weather_str = "{}h\n{}°".format(hour.hour, hour.temp)
