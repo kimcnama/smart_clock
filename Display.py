@@ -46,7 +46,7 @@ class Display(object):
         sun = Image.open("images/icon_sun.png")
         sun = sun.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
         for i in range(self.weather_hours_displayed):
-            loaded_image.paste(sun, box=(self.weather_icon_dim * i, window_height - self.weather_icon_dim))
+            loaded_image.paste(sun, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), sun)
         draw = ImageDraw.Draw(loaded_image)
 
         # clock

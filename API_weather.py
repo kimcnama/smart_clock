@@ -96,6 +96,9 @@ class API_weather:
         return self.url.format(self.lat, self.lng, year, month, day, hour, tomorrow_year, tomorrow_month, tomorrow_day,
                                tomorrow_hour)
 
+    def get_icon_path(self, day_time_symbol):
+        return None
+
 if __name__ == '__main__':
     weather = API_weather()
     weather.make_api_call()
