@@ -1,7 +1,6 @@
 import datetime
 import time
 import requests
-from xml.etree import ElementTree
 import xmltodict
 
 # Stephens Green
@@ -97,47 +96,53 @@ class API_weather:
                                tomorrow_hour)
 
     def get_icon_path(self, day_time_symbol, wind):
+        def night_time():
+            now = datetime.datetime.now()
+            if now.hour > 21 or now.hour < 7:
+                return True
+            else:
+                return False
         wind = int(wind)
         wind_threshold = 4
         day_time_symbol = day_time_symbol.lower()
         if 'rain' in day_time_symbol and 'sun' in day_time_symbol:
             wind_threshold = 4
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return 'images/icon_night_rain.jpeg'
             else:
                 return "images/icon_rainsuncloud.png"
         elif 'rain' in day_time_symbol and wind > wind_threshold:
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return 'images/wind_rain.jpeg'
             else:
                 return "images/wind_rain.png"
         elif 'rain' in day_time_symbol:
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return 'images/icon_night_rain.jpeg'
             else:
                 return "images/icon_rain.png"
         elif 'cloud' in day_time_symbol and 'sun' in day_time_symbol:
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return "images/icon_night_cloud.png"
             else:
                 return "images/icon_suncloud.png"
         elif 'cloud' in day_time_symbol:
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return "images/icon_night_cloud.png"
             else:
                 return "images/icon_cloudy.png"
         if 'rain' not in day_time_symbol and wind > wind_threshold:
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return "images/icon_night_wind.png"
             else:
                 return "images/icon_wind.png"
         elif 'sun' in day_time_symbol and 'cloud' in day_time_symbol:
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return "images/icon_night_cloud.png"
             else:
                 return "images/icon_suncloud.png"
         elif 'sun' in day_time_symbol:
-            if 'dark' in day_time_symbol:
+            if 'dark' in day_time_symbol or night_time():
                 return "images/icon_night_sun.png"
             else:
                 return "images/icon_sun.png"
