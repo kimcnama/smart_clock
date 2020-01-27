@@ -26,8 +26,6 @@ class API_bus:
                         self.bus_info.append("{} in {}".format(bus['route'], bus['duetime']))
                     else:
                         self.bus_info.append("{} in {}mins".format(bus['route'], bus['duetime']))
-                for bus in self.bus_info:
-                    print(bus + '\n')
                 if not self.bus_info:
                     self.bus_info.append(self.empty_msg)
         else:

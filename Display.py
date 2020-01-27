@@ -45,7 +45,7 @@ class Display(object):
         self.canvas.pack()
         self.weather_hours_displayed = 12
         self.weather_icon_dim = int(window_width / self.weather_hours_displayed)
-        self.background_second_change = 30
+        self.background_second_change = 20
         self.loaded_image = None
 
         self.photo = self.generate_image()
@@ -62,6 +62,7 @@ class Display(object):
     def generate_image(self):
         # load an image with Pillow's [Image]
         if self.loaded_image is None or datetime.datetime.now().second % self.background_second_change == 0:
+            self.loaded_image = None
             img_path, c_font, w_font = self.weather.get_background_path(
                 self.weather.hourly_forecast[0].day_time_symbol, self.weather.hourly_forecast[0].wind)
             self.clock_font_colour = colour_map[c_font]
@@ -98,7 +99,7 @@ class Display(object):
         draw.text((0, 0), bus_str, self.clock_font_colour, font=self.bus_font)
 
         # Weather
-        if now.minute == 1 or not self.weather.hourly_forecast:
+        if (now.minute == 1 and now.second == 3) or not self.weather.hourly_forecast:
             self.weather.make_api_call()
 
         for i, hour in enumerate(self.weather.hourly_forecast):
