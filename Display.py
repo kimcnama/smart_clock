@@ -4,7 +4,7 @@ import os
 import datetime
 import random
 from API_bus import API_bus
-from API_weather import API_weather
+import API_weather
 
 image_dir = 'images'
 clock_font_sz = 210
@@ -13,7 +13,16 @@ bus_font_sz = 50
 font_path = '/usr/share/fonts/truetype/freefont/FreeSerif.ttf'
 font_bold_path = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
 colour_map = {'black':(0, 0, 0),
-              'white':(255, 255, 255)}
+              'white':(255, 255, 255),
+              'grey':(160, 160, 160),
+              'yellow':(255, 255, 102),
+              'green':(0, 255, 0),
+              'pink':(255, 102, 255),
+              'red':(255, 0, 0),
+              'dr':(153, 0, 0),
+              'teal':(0, 102, 102)}
+font_colour = colour_map['black']
+
 time_font = 100
 window_width = 1050
 window_height = 540
@@ -23,13 +32,13 @@ class Display(object):
         self.root = Tk()
         self.bus = API_bus("184")
         self.bus.make_api_call()
-        self.weather = API_weather()
+        self.weather = API_weather.API_weather()
         self.weather.make_api_call()
         self.refresh_time = 1000
         self.root.title('Smart Clock')
         self.clock_font = ImageFont.truetype(font_bold_path, clock_font_sz)
         self.bus_font = ImageFont.truetype(font_path, bus_font_sz)
-        self.weather_font = ImageFont.truetype(font_path, weather_font_sz)
+        self.weather_font = ImageFont.truetype(font_bold_path, weather_font_sz)
         self.canvas = Canvas(width=window_width, height=window_height, bg='white')
         self.canvas.pack()
         self.weather_hours_displayed = 12
@@ -49,8 +58,7 @@ class Display(object):
 
     def generate_image(self):
         # load an image with Pillow's [Image]
-        images = os.listdir(image_dir)
-        loaded_image = Image.open(os.path.join(image_dir, images[random.randrange(0, len(images))]))
+        loaded_image = Image.open(self.weather.get_background_path(test='snow'))
         loaded_image = loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
 
         # Weather icons
@@ -65,7 +73,7 @@ class Display(object):
         draw = ImageDraw.Draw(loaded_image)
 
         # clock
-        draw.text(((loaded_image.size[0] / 3) + 50, loaded_image.size[1] / 3), self.get_time(), colour_map['black'],
+        draw.text(((loaded_image.size[0] / 3) + 50, loaded_image.size[1] / 3), self.get_time(), font_colour,
                   font=self.clock_font)
 
         # bus
@@ -82,7 +90,7 @@ class Display(object):
                 bus_str = "{}\n{}".format(bus_str, self.bus.bus_info[i])
             if i > 4:
                 break
-        draw.text((0, 0), bus_str, colour_map['black'], font=self.bus_font)
+        draw.text((0, 0), bus_str, font_colour, font=self.bus_font)
 
         # Weather
         if now.minute == 1 or not self.weather.hourly_forecast:
@@ -91,7 +99,7 @@ class Display(object):
         for i, hour in enumerate(self.weather.hourly_forecast):
             weather_str = "{}h\n{}°".format(hour.hour, hour.temp)
             draw.text((int(self.weather_icon_dim/2)-12+self.weather_icon_dim*i, window_height - self.weather_icon_dim - 25)
-                      ,weather_str, colour_map['black'], font=self.weather_font)
+                      ,weather_str, font_colour, font=self.weather_font)
 
         # convert loaded_image with Pillow's [ImageTK]
         return ImageTk.PhotoImage(loaded_image)
