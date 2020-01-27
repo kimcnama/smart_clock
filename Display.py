@@ -37,16 +37,19 @@ class Display(object):
         self.refresh_time = 1000
         self.root.title('Smart Clock')
         self.clock_font = ImageFont.truetype(font_bold_path, clock_font_sz)
+        self.clock_font_colour = colour_map['black']
         self.bus_font = ImageFont.truetype(font_path, bus_font_sz)
         self.weather_font = ImageFont.truetype(font_bold_path, weather_font_sz)
+        self.weather_font_colour = colour_map['black']
         self.canvas = Canvas(width=window_width, height=window_height, bg='white')
         self.canvas.pack()
         self.weather_hours_displayed = 12
         self.weather_icon_dim = int(window_width / self.weather_hours_displayed)
+        self.background_second_change = 30
+        self.loaded_image = None
 
         self.photo = self.generate_image()
         self.img = self.canvas.create_image(0, 0, image=self.photo, anchor=NW)
-
         self.root.after(self.refresh_time, self.change_photo)
         self.root.mainloop()
 
@@ -58,8 +61,13 @@ class Display(object):
 
     def generate_image(self):
         # load an image with Pillow's [Image]
-        loaded_image = Image.open(self.weather.get_background_path(test='snow'))
-        loaded_image = loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
+        if self.loaded_image is None or datetime.datetime.now().second % self.background_second_change == 0:
+            img_path, c_font, w_font = self.weather.get_background_path(
+                self.weather.hourly_forecast[0].day_time_symbol, self.weather.hourly_forecast[0].wind)
+            self.clock_font_colour = colour_map[c_font]
+            self.weather_font_colour = colour_map[w_font]
+            self.loaded_image = Image.open(img_path)
+            self.loaded_image = self.loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
 
         # Weather icons
         for i in range(self.weather_hours_displayed):
@@ -67,14 +75,14 @@ class Display(object):
                                                          self.weather.hourly_forecast[i].wind))
             icon = icon.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
             try:
-                loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
+                self.loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
             except:
-                loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim))
-        draw = ImageDraw.Draw(loaded_image)
+                self.loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim))
+        draw = ImageDraw.Draw(self.loaded_image)
 
         # clock
-        draw.text(((loaded_image.size[0] / 3) + 50, loaded_image.size[1] / 3), self.get_time(), font_colour,
-                  font=self.clock_font)
+        draw.text(((self.loaded_image.size[0] / 3) + 50, (self.loaded_image.size[1] / 3) - 50), self.get_time(),
+                  self.clock_font_colour, font=self.clock_font)
 
         # bus
         bus_str = ""
@@ -84,13 +92,10 @@ class Display(object):
         elif self.bus.empty_msg not in self.bus.bus_info and now.hour <= 5:
             self.bus.make_api_call()
         for i in range(len(self.bus.bus_info)):
-            if not bus_str:
-                bus_str = "{}".format(self.bus.bus_info[i])
-            else:
-                bus_str = "{}\n{}".format(bus_str, self.bus.bus_info[i])
-            if i > 4:
+            bus_str = "{}\n{}".format(bus_str, self.bus.bus_info[i])
+            if i > 5:
                 break
-        draw.text((0, 0), bus_str, font_colour, font=self.bus_font)
+        draw.text((0, 0), bus_str, self.clock_font_colour, font=self.bus_font)
 
         # Weather
         if now.minute == 1 or not self.weather.hourly_forecast:
@@ -99,10 +104,10 @@ class Display(object):
         for i, hour in enumerate(self.weather.hourly_forecast):
             weather_str = "{}h\n{}°".format(hour.hour, hour.temp)
             draw.text((int(self.weather_icon_dim/2)-12+self.weather_icon_dim*i, window_height - self.weather_icon_dim - 25)
-                      ,weather_str, font_colour, font=self.weather_font)
+                      ,weather_str, self.weather_font_colour, font=self.weather_font)
 
         # convert loaded_image with Pillow's [ImageTK]
-        return ImageTk.PhotoImage(loaded_image)
+        return ImageTk.PhotoImage(self.loaded_image)
 
     def get_time(self):
         now = datetime.datetime.now()

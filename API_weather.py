@@ -6,7 +6,7 @@ from Display import colour_map
 import random
 import os
 
-font_colour = {
+font_colours_dict = {
     'day_cloud1':{'font':'black', 'weather':'white'},
     'day_cloud2':{'font':'yellow', 'weather':'yellow'},
     'day_cloud3':{'font':'black', 'weather':'white'},
@@ -155,6 +155,13 @@ class API_weather:
         else:
             return False
 
+    def get_font_colour(self, full_path):
+        for pict in font_colours_dict.keys():
+            if pict in full_path:
+                pic = pict
+                break
+        return font_colours_dict[pic]['font'], font_colours_dict[pic]['weather']
+
     # return random path to background depending on weather
     def get_background_path(self, day_time_symbol=None, wind=None, test=None):
         if test:
@@ -170,23 +177,27 @@ class API_weather:
             dir_path = 'images/backgrounds/day_wind'
             files = os.listdir(dir_path)
             full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-            return full_path
+            font_colour, weather_font_colour = self.get_font_colour(full_path)
+            return full_path, font_colour, weather_font_colour
         elif 'rain' in day_time_symbol:
             if self.night_time():
                 dir_path = 'images/backgrounds/night_rain'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
             else:
                 dir_path = 'images/backgrounds/day_rain'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
         elif 'snow' in day_time_symbol or 'sleet' in day_time_symbol:
             dir_path = 'images/backgrounds/snow'
             files = os.listdir(dir_path)
             full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-            return full_path
+            font_colour, weather_font_colour = self.get_font_colour(full_path)
+            return full_path, font_colour, weather_font_colour
         elif 'cloud' in day_time_symbol and 'sun' in day_time_symbol and not self.night_time():
             if random.randrange(0, 2) == 1:
                 dir_path = 'images/backgrounds/day_cloud'
@@ -194,40 +205,47 @@ class API_weather:
                 dir_path = 'images/backgrounds/day_sun'
             files = os.listdir(dir_path)
             full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-            return full_path
+            font_colour, weather_font_colour = self.get_font_colour(full_path)
+            return full_path, font_colour, weather_font_colour
         elif 'cloud' in day_time_symbol:
             if self.night_time():
                 dir_path = 'images/backgrounds/night_cloud'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
             else:
                 dir_path = 'images/backgrounds/day_cloud'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
         elif 'sun' in day_time_symbol:
             if self.night_time():
                 dir_path = 'images/backgrounds/night_sun'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
             else:
                 dir_path = 'images/backgrounds/day_sun'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
         else:
             if self.night_time():
                 dir_path = 'images/backgrounds/night_cloud'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
             else:
                 dir_path = 'images/backgrounds/day_cloud'
                 files = os.listdir(dir_path)
                 full_path = os.path.join(dir_path, files[random.randrange(0, len(files))])
-                return full_path
+                font_colour, weather_font_colour = self.get_font_colour(full_path)
+                return full_path, font_colour, weather_font_colour
 
     def get_icon_path(self, day_time_symbol, wind):
         wind = int(wind)
