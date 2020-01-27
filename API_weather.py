@@ -2,7 +2,6 @@ import datetime
 import time
 import requests
 import xmltodict
-from Display import colour_map
 import random
 import os
 

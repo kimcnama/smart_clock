@@ -1,8 +1,6 @@
 from tkinter import *
 from PIL import Image, ImageTk, ImageFont, ImageDraw
-import os
 import datetime
-import random
 from API_bus import API_bus
 import API_weather
 
