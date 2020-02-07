@@ -87,12 +87,18 @@ class API_weather:
     def make_api_call(self):
         url = self.generate_url()
         response = requests.get(url)
-        if response.status_code == 200:
-            self.time_stamp_last_call = datetime.datetime.now()
-            xml_response = xmltodict.parse(response.content.decode('utf-8'))
-            self.parse_xml(xml_response)
-        else:
-            print("Error calling Weather API")
+        back_up_weather = self.hourly_forecast
+        try:
+            if response.status_code == 200:
+                self.time_stamp_last_call = datetime.datetime.now()
+                xml_response = xmltodict.parse(response.content.decode('utf-8'))
+                self.parse_xml(xml_response)
+            else:
+                print("Error calling Weather API")
+                if not self.hourly_forecast:
+                    self.hourly_forecast = back_up_weather
+        except:
+            self.hourly_forecast = back_up_weather
 
     def check_if_time_captured(self, t_to):
         for i, data in enumerate(self.hourly_forecast):
@@ -172,6 +178,10 @@ class API_weather:
             return full_path
         wind = int(wind)
         day_time_symbol = day_time_symbol.lower()
+        hr = datetime.datetime.now().hour
+        if hr > 9 or hr < 6 and 'dark' not in day_time_symbol:
+            day_time_symbol = "{}{}".format(day_time_symbol, 'dark')
+
         if wind > self.wind_threshold:
             dir_path = 'images/backgrounds/day_wind'
             files = os.listdir(dir_path)
@@ -249,6 +259,10 @@ class API_weather:
     def get_icon_path(self, day_time_symbol, wind):
         wind = int(wind)
         day_time_symbol = day_time_symbol.lower()
+        hr = datetime.datetime.now().hour
+        if hr > 9 or hr < 6 and 'dark' not in day_time_symbol:
+            day_time_symbol = "{}{}".format(day_time_symbol, 'dark')
+
         if 'rain' in day_time_symbol and 'sun' in day_time_symbol:
             if 'dark' in day_time_symbol or self.night_time():
                 return 'images/icon_night_rain.png'

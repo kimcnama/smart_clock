@@ -3,6 +3,7 @@ from PIL import Image, ImageTk, ImageFont, ImageDraw
 import datetime
 from API_bus import API_bus
 import API_weather
+import time
 
 image_dir = 'images'
 clock_font_sz = 210
@@ -32,7 +33,7 @@ class Display(object):
         self.bus.make_api_call()
         self.weather = API_weather.API_weather()
         self.weather.make_api_call()
-        self.refresh_time = 1000
+        self.refresh_time = 900
         self.root.title('Smart Clock')
         self.clock_font = ImageFont.truetype(font_bold_path, clock_font_sz)
         self.clock_font_colour = colour_map['black']
@@ -45,6 +46,7 @@ class Display(object):
         self.weather_icon_dim = int(window_width / self.weather_hours_displayed)
         self.background_second_change = 20
         self.loaded_image = None
+        self.img_path = None
 
         self.photo = self.generate_image()
         self.img = self.canvas.create_image(0, 0, image=self.photo, anchor=NW)
@@ -58,15 +60,17 @@ class Display(object):
         self.root.after(self.refresh_time, self.change_photo)
 
     def generate_image(self):
+        start_t = time.time()
         # load an image with Pillow's [Image]
         if self.loaded_image is None or datetime.datetime.now().second % self.background_second_change == 0:
-            self.loaded_image = None
-            img_path, c_font, w_font = self.weather.get_background_path(
+            self.img_path, c_font, w_font = self.weather.get_background_path(
                 self.weather.hourly_forecast[0].day_time_symbol, self.weather.hourly_forecast[0].wind)
             self.clock_font_colour = colour_map[c_font]
             self.weather_font_colour = colour_map[w_font]
-            self.loaded_image = Image.open(img_path)
-            self.loaded_image = self.loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
+
+        self.loaded_image = None
+        self.loaded_image = Image.open(self.img_path)
+        self.loaded_image = self.loaded_image.resize((window_width, window_height), resample=Image.BICUBIC)
 
         # Weather icons
         for i in range(self.weather_hours_displayed):
@@ -105,6 +109,7 @@ class Display(object):
             draw.text((int(self.weather_icon_dim/2)-12+self.weather_icon_dim*i, window_height - self.weather_icon_dim - 25)
                       ,weather_str, self.weather_font_colour, font=self.weather_font)
 
+        print(time.time() - start_t)
         # convert loaded_image with Pillow's [ImageTK]
         return ImageTk.PhotoImage(self.loaded_image)
 
