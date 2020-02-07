@@ -60,7 +60,6 @@ class Display(object):
         self.root.after(self.refresh_time, self.change_photo)
 
     def generate_image(self):
-        start_t = time.time()
         # load an image with Pillow's [Image]
         if self.loaded_image is None or datetime.datetime.now().second % self.background_second_change == 0:
             self.img_path, c_font, w_font = self.weather.get_background_path(
@@ -109,7 +108,6 @@ class Display(object):
             draw.text((int(self.weather_icon_dim/2)-12+self.weather_icon_dim*i, window_height - self.weather_icon_dim - 25)
                       ,weather_str, self.weather_font_colour, font=self.weather_font)
 
-        print(time.time() - start_t)
         # convert loaded_image with Pillow's [ImageTK]
         return ImageTk.PhotoImage(self.loaded_image)
 
