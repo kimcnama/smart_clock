@@ -3,7 +3,6 @@ from PIL import Image, ImageTk, ImageFont, ImageDraw
 import datetime
 from API_bus import API_bus
 import API_weather
-import time
 
 image_dir = 'images'
 clock_font_sz = 210
@@ -44,7 +43,7 @@ class Display(object):
         self.canvas.pack()
         self.weather_hours_displayed = 12
         self.weather_icon_dim = int(window_width / self.weather_hours_displayed)
-        self.background_second_change = 20
+        self.background_second_change = 10
         self.loaded_image = None
         self.img_path = None
 
@@ -63,7 +62,7 @@ class Display(object):
         # load an image with Pillow's [Image]
         if self.loaded_image is None or datetime.datetime.now().second % self.background_second_change == 0:
             self.img_path, c_font, w_font = self.weather.get_background_path(
-                self.weather.hourly_forecast[0].day_time_symbol, self.weather.hourly_forecast[0].wind)
+                self.weather.hourly_forecast[0].day_time_symbol, self.img_path, self.weather.hourly_forecast[0].wind)
             self.clock_font_colour = colour_map[c_font]
             self.weather_font_colour = colour_map[w_font]
 
