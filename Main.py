@@ -19,7 +19,7 @@ def sensor_module():
 		darkness = GPIO.input(INPUT_PIN)
 		
 		#turn screen on
-		if not darkness and screen_off:
+		if not darkness:
 			os.system(screen_on_command)
 			screen_off = False
 		#turn screen off
