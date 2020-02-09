@@ -17,7 +17,6 @@ def sensor_module():
 	while True:
 		# 0 for light, 1 for darkness
 		darkness = GPIO.input(INPUT_PIN)
-		print(darkness)
 		
 		#turn screen on
 		if not darkness and screen_off:
