@@ -85,10 +85,10 @@ class API_weather:
         self.hourly_forecast = []
 
     def make_api_call(self):
-        url = self.generate_url()
-        response = requests.get(url)
         back_up_weather = self.hourly_forecast
         try:
+            url = self.generate_url()
+            response = requests.get(url)
             if response.status_code == 200:
                 self.time_stamp_last_call = datetime.datetime.now()
                 xml_response = xmltodict.parse(response.content.decode('utf-8'))

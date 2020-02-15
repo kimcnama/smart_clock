@@ -61,8 +61,12 @@ class Display(object):
     def generate_image(self):
         # load an image with Pillow's [Image]
         if self.loaded_image is None or datetime.datetime.now().second % self.background_second_change == 0:
-            self.img_path, c_font, w_font = self.weather.get_background_path(
-                self.weather.hourly_forecast[0].day_time_symbol, self.img_path, self.weather.hourly_forecast[0].wind)
+            if self.weather.hourly_forecast:
+                self.img_path, c_font, w_font = self.weather.get_background_path(
+                    self.weather.hourly_forecast[0].day_time_symbol, self.img_path, self.weather.hourly_forecast[0].wind)
+            else:
+                self.img_path, c_font, w_font = self.weather.get_background_path(
+                    'cloud', self.img_path, 1)
             self.clock_font_colour = colour_map[c_font]
             self.weather_font_colour = colour_map[w_font]
 
@@ -72,13 +76,14 @@ class Display(object):
 
         # Weather icons
         for i in range(self.weather_hours_displayed):
-            icon = Image.open(self.weather.get_icon_path(self.weather.hourly_forecast[i].day_time_symbol,
-                                                         self.weather.hourly_forecast[i].wind))
-            icon = icon.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
-            try:
-                self.loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
-            except:
-                self.loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim))
+            if self.weather.hourly_forecast:
+                icon = Image.open(self.weather.get_icon_path(self.weather.hourly_forecast[i].day_time_symbol,
+                                                             self.weather.hourly_forecast[i].wind))
+                icon = icon.resize((self.weather_icon_dim, self.weather_icon_dim), resample=Image.BICUBIC)
+                try:
+                    self.loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim), icon)
+                except:
+                    self.loaded_image.paste(icon, (self.weather_icon_dim * i, window_height - self.weather_icon_dim))
         draw = ImageDraw.Draw(self.loaded_image)
 
         # clock
